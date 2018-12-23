@@ -45,6 +45,8 @@ public class Image {
         this.comment = comment;
     }
 
+
+    //here we are storing all the comments related to image
     @OneToMany(mappedBy = "image", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Comment> comment = new ArrayList<>();
 

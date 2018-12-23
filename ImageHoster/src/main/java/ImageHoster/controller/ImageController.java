@@ -96,23 +96,7 @@ public class ImageController {
 
 
 
-    @RequestMapping(value = "/image/{id}/{title}/comments" ,  method = RequestMethod.POST)
-    public String uploadComment(@RequestParam(name = "comment") String comment,@PathVariable("title") String title, @PathVariable("id") Integer id, Comment newcomment , HttpSession session, Model model) {
-        User user = (User) session.getAttribute("loggeduser");
 
-        Image image = imageService.getImageByTitle(title ,id);
-        newcomment.setUser(user);
-        newcomment.setImage(image);
-        newcomment.setCreatedDate(new Date());
-        newcomment.setText(comment);
-
-        commentService.postComment(newcomment);
-
-        model.addAttribute("comments",image.getComment());
-        model.addAttribute("image", image);
-        model.addAttribute("tags", image.getTags());
-        return "images/image";
-    }
 
     //This controller method is called when the request pattern is of type 'editImage'
     //This method fetches the image with the corresponding id from the database and adds it to the model with the key as 'image'
@@ -122,8 +106,10 @@ public class ImageController {
     //This string is then displayed by 'edit.html' file as previous tags of an image
     @RequestMapping(value = "/editImage")
     public String editImage(@RequestParam("imageId") Integer imageId,@RequestParam("title") String title,@RequestParam("userId") Integer userId ,HttpSession session ,Model model) {
+         //title and userid is fetched with the help of requestparameter
+        //here we are creating the logged in user object with the help of session
 
-
+        //finally the view is returned on the basis of logged in user and image owner(userId)
         User loggeduser = (User) session.getAttribute("loggeduser");
 
         if(userId != loggeduser.getId()){
@@ -189,9 +175,9 @@ public class ImageController {
     @RequestMapping(value = "/deleteImage", method = RequestMethod.DELETE)
     public String deleteImageSubmit(@RequestParam(name = "imageId") Integer imageId,@RequestParam("title") String title,@RequestParam("userId") Integer userId ,HttpSession session ,Model model) {
 
-
+        //getting the logged user with the help of session
         User loggeduser = (User) session.getAttribute("loggeduser");
-
+      //deleting the post if the user belongs to the owner of the image
         if(userId != loggeduser.getId()){
 
             Image image = imageService.getImageByTitle(title ,imageId);
