@@ -37,6 +37,17 @@ public class Image {
     @Column(name = "date")
     private Date date;
 
+    public List<Comment> getComment() {
+        return comment;
+    }
+
+    public void setComment(List<Comment> comment) {
+        this.comment = comment;
+    }
+
+    @OneToMany(mappedBy = "image", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<Comment> comment = new ArrayList<>();
+
     //The 'images' table is mapped to 'users' table with Many:One mapping
     //One image can have only one user (owner) but one user can have multiple images
     //FetchType is EAGER
@@ -45,11 +56,14 @@ public class Image {
     @JoinColumn(name = "user_id")
     private User user;
 
+
     //The attribute contains a list of all the tags of an image
     //Note that no column will be generated for this attribute in the database instead a new table will be created
     //Since the mapping is Many to Many, a new table will be generated containing the two columns both referencing to the primary key of both the tables ('images', 'tags')
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Tag> tags = new ArrayList<>();
+
+
 
     public Image() {
     }

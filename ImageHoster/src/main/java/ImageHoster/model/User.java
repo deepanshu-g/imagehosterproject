@@ -19,6 +19,8 @@ public class User {
     @Column(name = "id")
     private Integer id;
 
+
+
     @Column(name = "username")
     private String username;
 
@@ -33,6 +35,16 @@ public class User {
     @JoinColumn(name = "profile_id")
     private UserProfile profile;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<Comment> comment = new ArrayList<>();
+
+    public List<Comment> getComment() {
+        return comment;
+    }
+
+    public void setComment(List<Comment> comment) {
+        this.comment = comment;
+    }
 
     //The 'users' table is referenced by the 'images' table
     //The table (primary key) is referenced by the 'user' field in the 'images' table

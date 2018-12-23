@@ -1,8 +1,10 @@
 package ImageHoster.controller;
 
+import ImageHoster.model.Comment;
 import ImageHoster.model.Image;
 import ImageHoster.model.Tag;
 import ImageHoster.model.User;
+import ImageHoster.service.CommentService;
 import ImageHoster.service.ImageService;
 import ImageHoster.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,10 @@ public class ImageController {
     @Autowired
     private TagService tagService;
 
+    @Autowired
+    private CommentService commentService;
+
+
     //This method displays all the images in the user home page after successful login
     @RequestMapping("images")
     public String getUserImages(Model model) {
@@ -46,8 +52,11 @@ public class ImageController {
     //Here a list of tags is added in the Model type object
     //this list is then sent to 'images/image.html' file and the tags are displayed
     @RequestMapping("/images/{id}/{title}")
-    public String showImage(@PathVariable("title") String title,@PathVariable("id") Integer id, Model model) {
-        Image image = imageService.getImageByTitle(title,id);
+    public String showImage(@PathVariable("title") String title, @PathVariable("id") Integer id, Model model) {
+
+
+        Image image = imageService.getImageByTitle(title ,id);
+        model.addAttribute("comments",image.getComment());
         model.addAttribute("image", image);
         model.addAttribute("tags", image.getTags());
         return "images/image";
@@ -83,6 +92,26 @@ public class ImageController {
         newImage.setDate(new Date());
         imageService.uploadImage(newImage);
         return "redirect:/images";
+    }
+
+
+
+    @RequestMapping(value = "/image/{id}/{title}/comments" ,  method = RequestMethod.POST)
+    public String uploadComment(@RequestParam(name = "comment") String comment,@PathVariable("title") String title, @PathVariable("id") Integer id, Comment newcomment , HttpSession session, Model model) {
+        User user = (User) session.getAttribute("loggeduser");
+
+        Image image = imageService.getImageByTitle(title ,id);
+        newcomment.setUser(user);
+        newcomment.setImage(image);
+        newcomment.setCreatedDate(new Date());
+        newcomment.setText(comment);
+
+        commentService.postComment(newcomment);
+
+        model.addAttribute("comments",image.getComment());
+        model.addAttribute("image", image);
+        model.addAttribute("tags", image.getTags());
+        return "images/image";
     }
 
     //This controller method is called when the request pattern is of type 'editImage'
@@ -150,7 +179,7 @@ public class ImageController {
         updatedImage.setDate(new Date());
 
         imageService.updateImage(updatedImage);
-        return "redirect:/images/" + updatedImage.getTitle();
+        return "redirect:/images/" + imageId + "/"+ updatedImage.getTitle();
     }
 
 
@@ -184,7 +213,7 @@ public class ImageController {
         return Base64.getEncoder().encodeToString(file.getBytes());
     }
 
-    //findOrCreateTags() method has been implemented, which returns the list of tags after converting the ‘tags’ string to a list of all the tags and also stores the tags in the database if they do not exist in the database. Observe the method and complete the code where required for this method.
+    //findOrCreateTags() method has been implemented, which returns the list of tags after converting the â€˜tagsâ€™ string to a list of all the tags and also stores the tags in the database if they do not exist in the database. Observe the method and complete the code where required for this method.
     //Try to get the tag from the database using getTagByName() method. If tag is returned, you need not to store that tag in the database, and if null is returned, you need to first store that tag in the database and then the tag is added to a list
     //After adding all tags to a list, the list is returned
     private List<Tag> findOrCreateTags(String tagNames) {
