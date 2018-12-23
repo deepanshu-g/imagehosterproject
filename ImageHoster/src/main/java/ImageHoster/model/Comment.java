@@ -34,6 +34,16 @@ public class Comment {
     @JoinColumn(name = "image_id")
     private Image image;
 
+    public Comment(){
+
+    }
+
+    public Comment(String text, Date createdDate, User user, Image image) {
+        this.text = text;
+        this.createdDate = createdDate;
+        this.user = user;
+        this.image = image;
+    }
 
     public Integer getId() {
         return id;
