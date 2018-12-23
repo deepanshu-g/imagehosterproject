@@ -15,7 +15,7 @@ public class CommentRepository {
     @PersistenceUnit(unitName = "imageHoster")
     private EntityManagerFactory emf;
 
-
+      //registering the new comment in the data base
     public Comment postComment(Comment newComment){
         EntityManager em = emf.createEntityManager();
         EntityTransaction transaction = em.getTransaction();

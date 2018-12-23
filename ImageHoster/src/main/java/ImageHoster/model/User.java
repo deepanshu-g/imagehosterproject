@@ -35,6 +35,7 @@ public class User {
     @JoinColumn(name = "profile_id")
     private UserProfile profile;
 
+    //here we are storing all the which  comments related to the user
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Comment> comment = new ArrayList<>();
 

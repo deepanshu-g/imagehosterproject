@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class CommentService {
     @Autowired
     private CommentRepository commentRepository;
-
+     //calling the postcomment method in the comment repository
     public void postComment(Comment post){
 
         commentRepository.postComment(post);
